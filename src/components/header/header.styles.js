@@ -1,7 +1,12 @@
 import styled from 'styled-components';
 
 export const HeaderContainer = styled.div`
-	height: 30px;
+	height: fit-content;
 	margin-bottom: 40px;
-	background-color: #7805f7;
+	text-align: center;
+	/* background-color: #7805f7; */
+	img {
+		height: 100px;
+		width: 100px;
+	}
 `;
