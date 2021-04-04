@@ -23,7 +23,6 @@ const Looper = () => {
 				if (instrumentsAreOn[i]) {
 					instruments[i].audio.currentTime = timeStartedPlaying;
 					instruments[i].audio.play();
-					console.log(i + ' Played');
 				} else {
 					instruments[i].audio.pause();
 				}
@@ -33,13 +32,13 @@ const Looper = () => {
 	}, [isLooperPlaying]);
 
 	useEffect(() => {
-		//set instruments sound to loop
+		//set instruments sound property to loop
 		for (let i = 0; i < instruments.length; i++) {
 			instruments[i].audio.loop = true;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
+	//prop => click event, handle logic of click events
 	const handleButtonClick = (event) => {
 		const name = event.getAttribute('name');
 		const value = event.getAttribute('value');
@@ -47,10 +46,7 @@ const Looper = () => {
 		if (name === 'main') {
 			switch (value) {
 				case 'pauseMain': //pause button was clicked
-					setisLooperPlaying(false);
-					setInstrumentsAreOn(defaultArray);
-					setTimeStartedPlaying(0);
-					setPlayingCount(0);
+					setStateToDefault();
 					for (let i = 0; i < instruments.length; i++) {
 						instruments[i].audio.pause();
 					}
@@ -84,10 +80,7 @@ const Looper = () => {
 						setInstrumentsAreOn(turnOffInstrument(index)); //set state of instrument to false
 						if (playingCount === 1) {
 							//if it's the last instrument playing
-							setInstrumentsAreOn(defaultArray);
-							setTimeStartedPlaying(0);
-							setPlayingCount(0);
-							setisLooperPlaying(false);
+							setStateToDefault();
 						}
 					}
 					setPlayingCount(playingCount - 1);
@@ -119,6 +112,12 @@ const Looper = () => {
 			if (instrumentsAreOn[i]) return instruments[i].audio.currentTime;
 			else return 0;
 		}
+	};
+	const setStateToDefault = () => {
+		setisLooperPlaying(false);
+		setInstrumentsAreOn(defaultArray);
+		setTimeStartedPlaying(0);
+		setPlayingCount(0);
 	};
 
 	return (
