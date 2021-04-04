@@ -18,8 +18,6 @@ const Looper = () => {
 	const [playingCount, setPlayingCount] = useState(0); //how many instruments are playing
 
 	useEffect(() => {
-		console.log(instrumentsAreOn);
-		console.log(playingCount);
 		for (let i = 0; i < instruments.length; i++) {
 			if (isLooperPlaying) {
 				if (instrumentsAreOn[i]) {
@@ -45,7 +43,6 @@ const Looper = () => {
 	const handleButtonClick = (event) => {
 		const name = event.getAttribute('name');
 		const value = event.getAttribute('value');
-		console.log(name, value);
 		//if main control buttons were clicked
 		if (name === 'main') {
 			switch (value) {
@@ -70,6 +67,7 @@ const Looper = () => {
 			const isOn = instrumentsAreOn[index];
 			//if play button was clicked
 			if (value === 'play') {
+				if (instrumentsAreOn[index]) return; //handle random click on play instrument when it's alreat on
 				setInstrumentsAreOn(turnOnInstrument(index));
 				if (isLooperPlaying) {
 					instruments[index].audio.currentTime = getCurrentTime();
@@ -90,10 +88,10 @@ const Looper = () => {
 							setTimeStartedPlaying(0);
 							setPlayingCount(0);
 							setisLooperPlaying(false);
-							console.log('Playing Count : ' + playingCount);
 						}
 					}
 					setPlayingCount(playingCount - 1);
+					setInstrumentsAreOn(turnOffInstrument(index));
 				}
 			}
 		}

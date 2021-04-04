@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 //styles
 import { InstrumentContainer, InstrumentTitle } from './instrument.styles';
 //components
