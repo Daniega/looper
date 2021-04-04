@@ -13,7 +13,7 @@ const defaultArray = [false, false, false, false, false, false, false, false, fa
 const Looper = () => {
 	const [instruments] = useContext(InstrumentsContext); //Context API to get state of Instruments from instrumentsContext
 	const [instrumentsAreOn, setInstrumentsAreOn] = useState(defaultArray); //which instruments are on?
-	const [isLooperPlaying, setisLooperPlaying] = useState(false); //main control play or pause looper
+	const [isLooperPlaying, setisLooperPlaying] = useState(false); //main control state
 	const [timeStartedPlaying, setTimeStartedPlaying] = useState(0); //time the instrument started playing
 	const [playingCount, setPlayingCount] = useState(0); //how many instruments are playing
 
