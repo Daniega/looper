@@ -44,6 +44,7 @@ const Looper = () => {
 		const value = event.getAttribute('value');
 		//if main control buttons were clicked
 		if (name === 'main') {
+			//buttons on main control were clicked
 			switch (value) {
 				case 'pauseMain': //pause button was clicked
 					setStateToDefault();
