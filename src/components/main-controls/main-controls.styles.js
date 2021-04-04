@@ -14,6 +14,9 @@ export const MainControlsContainer = styled.div`
 	border-radius: 15px;
 	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 	transition: 0.2s;
+	&:hover {
+		background: #505a6e;
+	}
 
 	@media (min-width: 800px) {
 		width: 60vw;

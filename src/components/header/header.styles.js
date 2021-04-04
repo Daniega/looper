@@ -8,5 +8,11 @@ export const HeaderContainer = styled.div`
 	img {
 		height: 100px;
 		width: 100px;
+
+		&:hover {
+			cursor: pointer;
+			transform: scale(1.1);
+			transition: 0.2s;
+		}
 	}
 `;
