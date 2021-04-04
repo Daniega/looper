@@ -1,13 +1,12 @@
 import React from 'react';
-
+//styles
 import { FooterContainer } from './footer.styles';
 
 const Footer = () => {
 	const getCurrentYear = new Date().getFullYear();
-
 	return (
 		<FooterContainer>
-			<span>All rights reserved "Looper" by Daniel Gaishuber {getCurrentYear}</span>
+			<span>By Daniel Gaishuber {getCurrentYear}</span>
 		</FooterContainer>
 	);
 };

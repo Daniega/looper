@@ -1,28 +1,139 @@
-import React from 'react';
-
+import React, { useState, useEffect, useContext } from 'react';
+//components
+import Instrument from '../instrument/instrument.component';
+import MainControls from '../main-controls/main-controls.component';
+//Context API
+import { InstrumentsContext } from '../../InstrumentsContext';
+//styles
 import { LooperContainer } from './looper.styles';
 
-import Instrument from '../instrument/instrument.component';
-
-const instruments = [
-	{ name: 'Bass Warwick', path: 'bassWarwick' },
-	{ name: 'Drums And Snares', path: 'drumsAndSnares' },
-	{ name: 'Electric Guitar', path: 'electricGuitar' },
-	{ name: 'Future Funk', path: 'futureFunk' },
-	{ name: 'Groove Darbuka', path: 'grooveDarbuka' },
-	{ name: 'Maze Politics', path: 'mazePolitics' },
-	{ name: 'Organ Synth', path: 'organSynth' },
-	{ name: 'PAS3 Groove', path: 'pas3Groove' },
-	{ name: 'Stutter Break Beats', path: 'stutterBreakBeats' },
-];
+//helper array for "instrumentsAreOn" state
+const defaultArray = [false, false, false, false, false, false, false, false, false];
 
 const Looper = () => {
+	const [instruments] = useContext(InstrumentsContext); //Context API to get state of Instruments from instrumentsContext
+	const [instrumentsAreOn, setInstrumentsAreOn] = useState(defaultArray); //which instruments are on?
+	const [isLooperPlaying, setisLooperPlaying] = useState(false); //main control play or pause looper
+	const [timeStartedPlaying, setTimeStartedPlaying] = useState(0); //time the instrument started playing
+	const [playingCount, setPlayingCount] = useState(0); //how many instruments are playing
+
+	useEffect(() => {
+		console.log(instrumentsAreOn);
+		console.log(playingCount);
+		for (let i = 0; i < instruments.length; i++) {
+			if (isLooperPlaying) {
+				if (instrumentsAreOn[i]) {
+					instruments[i].audio.currentTime = timeStartedPlaying;
+					instruments[i].audio.play();
+					console.log(i + ' Played');
+				} else {
+					instruments[i].audio.pause();
+				}
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isLooperPlaying]);
+
+	useEffect(() => {
+		//set instruments sound to loop
+		for (let i = 0; i < instruments.length; i++) {
+			instruments[i].audio.loop = true;
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const handleButtonClick = (event) => {
+		const name = event.getAttribute('name');
+		const value = event.getAttribute('value');
+		console.log(name, value);
+		//if main control buttons were clicked
+		if (name === 'main') {
+			switch (value) {
+				case 'pauseMain': //pause button was clicked
+					setisLooperPlaying(false);
+					setInstrumentsAreOn(defaultArray);
+					setTimeStartedPlaying(0);
+					setPlayingCount(0);
+					for (let i = 0; i < instruments.length; i++) {
+						instruments[i].audio.pause();
+					}
+					break;
+				case 'playMain': //play button was clicked
+					setisLooperPlaying(true);
+					break;
+				default:
+					break;
+			}
+		} else {
+			// instrument buttons were clicked
+			const index = getInstrumentIndex(name);
+			const isOn = instrumentsAreOn[index];
+			//if play button was clicked
+			if (value === 'play') {
+				setInstrumentsAreOn(turnOnInstrument(index));
+				if (isLooperPlaying) {
+					instruments[index].audio.currentTime = getCurrentTime();
+					instruments[index].audio.play();
+				}
+				setPlayingCount(playingCount + 1);
+			} else {
+				//pause button was clicked
+				if (isOn) {
+					//if instrument is on
+					if (isLooperPlaying) {
+						//if looper is on
+						instruments[index].audio.pause(); //pause audio of the instrument
+						setInstrumentsAreOn(turnOffInstrument(index)); //set state of instrument to false
+						if (playingCount === 1) {
+							//if it's the last instrument playing
+							setInstrumentsAreOn(defaultArray);
+							setTimeStartedPlaying(0);
+							setPlayingCount(0);
+							setisLooperPlaying(false);
+							console.log('Playing Count : ' + playingCount);
+						}
+					}
+					setPlayingCount(playingCount - 1);
+				}
+			}
+		}
+	};
+	//prop => instrument name, return => index of instrument
+	const getInstrumentIndex = (name) => {
+		const index = instruments.findIndex((instrument) => instrument.name === name);
+		return index;
+	};
+	//prop => instrument index, return => new Array where newArr[index] = true;
+	const turnOnInstrument = (index) => {
+		let newArr = [...instrumentsAreOn];
+		newArr[index] = true;
+		return newArr;
+	};
+	//prop => instrument index, return => new Array where newArr[index] = false
+	const turnOffInstrument = (index) => {
+		let newArr = [...instrumentsAreOn];
+		newArr[index] = false;
+		return newArr;
+	};
+	//if instrument is on return the instruments currentTime
+	const getCurrentTime = () => {
+		for (let i = 0; i < instruments.length; i++) {
+			if (instrumentsAreOn[i]) return instruments[i].audio.currentTime;
+			else return 0;
+		}
+	};
+
 	return (
-		<LooperContainer>
-			{instruments.map((instrument, index) => (
-				<Instrument title={instrument.name} key={index} audio={instrument.path} />
-			))}
-		</LooperContainer>
+		<div>
+			<LooperContainer>
+				{instruments.map((instrument, index) => (
+					<Instrument instrument={instrument} isOn={instrumentsAreOn[index]} key={index} handleButtonClick={handleButtonClick} />
+				))}
+			</LooperContainer>
+			<div>
+				<MainControls isPlaying={isLooperPlaying} handleClick={handleButtonClick} />
+			</div>
+		</div>
 	);
 };
 
